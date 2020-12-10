@@ -12,11 +12,13 @@ namespace DogGo.Controllers
     public class OwnersController : Controller
     {
         private readonly IOwnerRepository _ownerRepo;
+        private readonly IDogRepository _dogRepo;
 
         // ASP.NET will give us an instance of our Owner Repository. This is called "Dependency Injection"
-        public OwnersController(IOwnerRepository ownerRepository)
+        public OwnersController(IOwnerRepository ownerRepository, IDogRepository dogRepository)
         {
             _ownerRepo = ownerRepository;
+            _dogRepo = dogRepository;
         }
 
         // GET: OwnersController
@@ -30,6 +32,7 @@ namespace DogGo.Controllers
         public ActionResult Details(int id)
         {
             Owner owner = _ownerRepo.GetOwnerById(id);
+            owner.Dogs = _dogRepo.GetDogsByOwnerId(owner.Id);
 
             if (owner == null)
             {
