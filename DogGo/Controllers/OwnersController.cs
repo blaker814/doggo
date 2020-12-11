@@ -32,12 +32,14 @@ namespace DogGo.Controllers
         public ActionResult Details(int id)
         {
             Owner owner = _ownerRepo.GetOwnerById(id);
-            owner.Dogs = _dogRepo.GetDogsByOwnerId(owner.Id);
+            
 
             if (owner == null)
             {
                 return NotFound();
             }
+
+            owner.Dogs = _dogRepo.GetDogsByOwnerId(owner.Id);
 
             return View(owner);
         }
