@@ -25,7 +25,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT o.Id, o.[Name], [Address], [Phone], NeighborhoodId, n.[Name] AS NeighborhoodName
+                        SELECT o.Id, o.[Name], Address, Phone, NeighborhoodId, n.[Name] AS NeighborhoodName
                         FROM Owner o
                         JOIN Neighborhood n ON n.Id = NeighborhoodId
                     ";
@@ -67,7 +67,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT o.Id, o.[Name], [Address], [Phone], NeighborhoodId, n.[Name] AS NeighborhoodName
+                        SELECT o.Id, o.[Name], Address, Phone, NeighborhoodId, n.[Name] AS NeighborhoodName
                         FROM Owner o
                         JOIN Neighborhood n ON n.Id = NeighborhoodId
                         WHERE o.Id = @id

@@ -28,7 +28,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], [Breed], OwnerId
+                        SELECT Id, [Name], Breed, OwnerId
                         FROM Dog
                         WHERE OwnerId = @id
                     ";
@@ -64,7 +64,9 @@ namespace DogGo.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, [Name], [Breed], [Notes], OwnerId FROM Dog";
+                    cmd.CommandText = @"SELECT d.Id, d.[Name], Breed, Notes, OwnerId, o.[Name] AS OwnerName, Address, Phone, NeighborhoodId
+                                        FROM Dog d
+                                        JOIN Owner o ON o.Id = OwnerId";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -77,8 +79,15 @@ namespace DogGo.Repositories
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             Breed = reader.GetString(reader.GetOrdinal("Breed")),
-                            Notes = reader.GetString(reader.GetOrdinal("Notes")),
-                            OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId"))
+                            OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId")),
+                            Owner = new Owner
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("OwnerId")),
+                                Name = reader.GetString(reader.GetOrdinal("OwnerName")),
+                                Address = reader.GetString(reader.GetOrdinal("Address")),
+                                Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                                NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                            }
                         };
 
                         dogs.Add(dog);
@@ -98,7 +107,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO Dog ([Name], [Breed], [Notes], OwnerId)
+                    INSERT INTO Dog ([Name], Breed, Notes, OwnerId)
                     OUTPUT INSERTED.ID
                     VALUES (@name, @breed, @notes, @ownerId);
                 ";
