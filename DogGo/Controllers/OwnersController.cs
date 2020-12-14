@@ -72,17 +72,20 @@ namespace DogGo.Controllers
         // POST: OwnersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Owner owner)
+        public ActionResult Create(OwnerFormViewModel ownerFormModel)
         {
             try
             {
-                _ownerRepo.AddOwner(owner);
+                _ownerRepo.AddOwner(ownerFormModel.Owner);
 
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View(owner);
+                ownerFormModel.ErrorMessage = "Whoops! Something went wrong while saving this owner";
+                ownerFormModel.Neighborhoods = _neighborhoodRepo.GetAll();
+
+                return View(ownerFormModel);
             }
         }
 
@@ -96,23 +99,32 @@ namespace DogGo.Controllers
                 return NotFound();
             }
 
-            return View(owner);
+            List<Neighborhood> neighborhoods = _neighborhoodRepo.GetAll();
+
+            OwnerFormViewModel vm = new OwnerFormViewModel()
+            {
+                Owner = owner,
+                Neighborhoods = neighborhoods
+            };
+
+            return View(vm);
         }
 
         // POST: OwnersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Owner owner)
+        public ActionResult Edit(int id, OwnerFormViewModel ownerFormModel)
         {
             try
             {
-                _ownerRepo.UpdateOwner(owner);
+                _ownerRepo.UpdateOwner(ownerFormModel.Owner);
 
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View(owner);
+                ownerFormModel.Neighborhoods = _neighborhoodRepo.GetAll();
+                return View(ownerFormModel);
             }
         }
 

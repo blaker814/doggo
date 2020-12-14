@@ -6,6 +6,11 @@
 
 <h1>Create</h1>
 
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
 <h4>Owner</h4>
 <hr />
 <div class="row">

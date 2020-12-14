@@ -1,4 +1,5 @@
 ﻿using DogGo.Models;
+using DogGo.Models.ViewModels;
 using DogGo.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,17 @@ namespace DogGo.Controllers
     public class WalkersController : Controller
     {
         private readonly IWalkerRepository _walkerRepo;
+        private readonly IWalkRepository _walkRepo;
+        private readonly IOwnerRepository _ownerRepo;
+        private readonly IDogRepository _dogRepo;
 
         // ASP.NET will give us an instance of our Walker Repository. This is called "Dependency Injection"
-        public WalkersController(IWalkerRepository walkerRepository)
+        public WalkersController(IWalkerRepository walkerRepository, IWalkRepository walkRepository, IOwnerRepository ownerRepository, IDogRepository dogRepository)
         {
             _walkerRepo = walkerRepository;
+            _walkRepo = walkRepository;
+            _ownerRepo = ownerRepository;
+            _dogRepo = dogRepository;
         }
 
         // GET: Walkers
@@ -37,7 +44,30 @@ namespace DogGo.Controllers
                 return NotFound();
             }
 
-            return View(walker);
+            List<Walk> walks = _walkRepo.GetWalksByWalkerId(walker.Id);
+            List<Owner> owners = _ownerRepo.GetAllOwners();
+            List<Owner> ownersWithDogs = new List<Owner>();
+            foreach (Owner owner in owners)
+            {
+                ownersWithDogs.Add(new Owner
+                {
+                    Name = owner.Name,
+                    Dogs = _dogRepo.GetDogsByOwnerId(owner.Id)
+                });
+            };
+
+            int secs = walks.Sum(walk => walk.Duration);
+            TimeSpan time = TimeSpan.FromSeconds(secs);
+
+            WalkerProfileViewModel vm = new WalkerProfileViewModel
+            {
+                Walker = walker,
+                Walks = walks,
+                Owners = ownersWithDogs,
+                WalkTime = time.ToString(@"hh\:mm")
+            };
+
+            return View(vm);
         }
 
         // GET: WalkersController/Create
