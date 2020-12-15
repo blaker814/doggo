@@ -29,8 +29,9 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], Breed, Notes, ImageUrl, OwnerId
-                        FROM Dog
+                        SELECT d.Id, d.[Name], Breed, Notes, ImageUrl, OwnerId, o.[Name] AS OwnerName
+                        FROM Dog d
+                        JOIN Owner o ON OwnerId = o.Id
                         WHERE OwnerId = @id
                     ";
                     cmd.Parameters.AddWithValue("@id", id);
@@ -47,7 +48,12 @@ namespace DogGo.Repositories
                             Breed = reader.GetString(reader.GetOrdinal("Breed")),
                             Notes = ReaderUtils.GetNullableString(reader, "Notes"),
                             ImageUrl = ReaderUtils.GetNullableString(reader, "ImageUrl"),
-                            OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId"))
+                            OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId")),
+                            Owner = new Owner
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("OwnerId")),
+                                Name = reader.GetString(reader.GetOrdinal("OwnerName"))
+                            }
                         };
 
                         dogs.Add(dog);
