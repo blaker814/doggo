@@ -60,7 +60,7 @@ namespace DogGo
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Owners}/{action=Index}/{id?}");
+                    pattern: "{controller=Auth}/{action=Login}/{id?}");
             });
         }
     }

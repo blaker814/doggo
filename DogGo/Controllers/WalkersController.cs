@@ -30,19 +30,19 @@ namespace DogGo.Controllers
         // GET: Walkers
         public ActionResult Index()
         {
-            if (GetCurrentUserId() != -1)
-            {
-                int neighborhoodId = _ownerRepo.GetOwnerById(GetCurrentUserId()).NeighborhoodId;
-                List<Walker> walkersInNeighborhood = _walkerRepo.GetWalkersInNeighborhood(neighborhoodId);
+            //if (GetCurrentUserId() != -1)
+            //{
+            //    int neighborhoodId = _ownerRepo.GetOwnerById(GetCurrentUserId()).NeighborhoodId;
+            //    List<Walker> walkersInNeighborhood = _walkerRepo.GetWalkersInNeighborhood(neighborhoodId);
 
-                return View(walkersInNeighborhood);
-            }
-            else
-            {
-                List<Walker> walkers = _walkerRepo.GetAllWalkers();
+            //    return View(walkersInNeighborhood);
+            //}
+            //else
+            //{
+            List<Walker> walkers = _walkerRepo.GetAllWalkers();
 
-                return View(walkers);
-            }
+            return View(walkers);
+            //}
 
         }
 
@@ -123,16 +123,16 @@ namespace DogGo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Walker walker)
         {
-            try
-            {
+            //try
+            //{
                 _walkerRepo.UpdateWalker(walker);
 
                 return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            //}
+            //catch
+            //{
+            //    return View();
+            //}
         }
 
         // GET: WalkersController/Delete/5

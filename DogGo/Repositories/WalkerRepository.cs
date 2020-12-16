@@ -31,7 +31,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT w.Id, w.[Name], ImageUrl, NeighborhoodId, n.[Name] AS NeighborhoodName
+                        SELECT w.Id, w.[Name], Email, ImageUrl, NeighborhoodId, n.[Name] AS NeighborhoodName
                         FROM Walker w
                         JOIN Neighborhood n ON n.Id = NeighborhoodId
                     ";
@@ -45,6 +45,7 @@ namespace DogGo.Repositories
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
                             ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
                             NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
                             Neighborhood = new Neighborhood
@@ -110,7 +111,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT w.Id, w.[Name], ImageUrl, NeighborhoodId, n.[Name] AS NeighborhoodName
+                        SELECT w.Id, w.[Name], Email, ImageUrl, NeighborhoodId, n.[Name] AS NeighborhoodName
                         FROM Walker w
                         JOIN Neighborhood n ON n.Id = NeighborhoodId
                         WHERE w.Id = @id
@@ -126,6 +127,7 @@ namespace DogGo.Repositories
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
                             ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
                             NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
                             Neighborhood = new Neighborhood
@@ -183,11 +185,13 @@ namespace DogGo.Repositories
                             UPDATE Walker
                             SET 
                                 [Name] = @name,
-                                ImageUrl = @imageUrl
+                                Email = @email,
+                                ImageUrl = @imageUrl,
                                 NeighborhoodId = @neighborhoodId
                             WHERE Id = @id";
 
                     cmd.Parameters.AddWithValue("@name", walker.Name);
+                    cmd.Parameters.AddWithValue("@email", walker.Email);
                     cmd.Parameters.AddWithValue("@imageUrl", walker.ImageUrl);
                     cmd.Parameters.AddWithValue("@neighborhoodId", walker.NeighborhoodId);
                     cmd.Parameters.AddWithValue("@id", walker.Id);
