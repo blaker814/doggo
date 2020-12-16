@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DogGo.Repositories.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,5 +16,6 @@ namespace DogGo.Models
         public int NeighborhoodId { get; set; }
         public Neighborhood Neighborhood { get; set; }
         public List<Dog> Dogs { get; set; }
+        public string ImageURL => Gravatar.GetUrl(Email);
     }
 }

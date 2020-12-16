@@ -57,20 +57,34 @@ namespace DogGo.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
 
-            return RedirectToAction("Index", "Dogs");
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+
+            return RedirectToAction("Login");
         }
 
         // GET: OwnersController
         public ActionResult Index()
         {
-            List<Owner> owners = _ownerRepo.GetAllOwners();
-            return View(owners);
+            return RedirectToAction("Details");
         }
 
         // GET: OwnersController/Details/5
         public ActionResult Details(int id)
         {
-            Owner owner = _ownerRepo.GetOwnerById(id);
+            Owner owner = new Owner();
+            if (id == 0)
+            {
+                owner = _ownerRepo.GetOwnerById(GetCurrentUserId());
+            }
+            else
+            {
+                owner = _ownerRepo.GetOwnerById(id);
+            }
 
             if (owner == null)
             {
@@ -187,6 +201,11 @@ namespace DogGo.Controllers
                 return View(owner);
             }
 
+        }
+        private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
