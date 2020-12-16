@@ -4,14 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Register Owner</h1>
 
 @if (!String.IsNullOrEmpty(Model.ErrorMessage))
 {
     <div class="alert alert-danger">@Model.ErrorMessage</div>
 }
 
-<h4>Owner</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -38,7 +37,7 @@
                 <span asp-validation-for="Owner.Address" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Owner.NeighborhoodId" class="control-label"></label>
+                <label asp-for="Owner.NeighborhoodId" class="control-label">Neighborhood</label>
                 <select asp-for="Owner.NeighborhoodId" class="form-control">
                     <option value="">Select Neighborhood</option>
                     @foreach (Neighborhood neighborhood in Model.Neighborhoods)
@@ -56,5 +55,5 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Login">Back to Login</a>
 </div>

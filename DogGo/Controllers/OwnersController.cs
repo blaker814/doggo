@@ -3,6 +3,7 @@ using DogGo.Models.ViewModels;
 using DogGo.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -67,6 +68,7 @@ namespace DogGo.Controllers
             return RedirectToAction("Login");
         }
 
+        [Authorize]
         // GET: OwnersController
         public ActionResult Index()
         {
@@ -121,13 +123,27 @@ namespace DogGo.Controllers
         // POST: OwnersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(OwnerFormViewModel ownerFormModel)
+        public async Task<ActionResult> Create(OwnerFormViewModel ownerFormModel)
         {
             try
             {
                 _ownerRepo.AddOwner(ownerFormModel.Owner);
 
-                return RedirectToAction(nameof(Index));
+                List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, ownerFormModel.Owner.Id.ToString()),
+                    new Claim(ClaimTypes.Email, ownerFormModel.Owner.Email),
+                    new Claim(ClaimTypes.Role, "DogOwner"),
+                };
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction(nameof(Details), new { id = ownerFormModel.Owner.Id });
             }
             catch
             {
