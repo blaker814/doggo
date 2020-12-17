@@ -30,19 +30,19 @@ namespace DogGo.Controllers
         // GET: Walkers
         public ActionResult Index()
         {
-            //if (GetCurrentUserId() != -1)
-            //{
-            //    int neighborhoodId = _ownerRepo.GetOwnerById(GetCurrentUserId()).NeighborhoodId;
-            //    List<Walker> walkersInNeighborhood = _walkerRepo.GetWalkersInNeighborhood(neighborhoodId);
+            if (GetCurrentUserId() != -1)
+            {
+                int neighborhoodId = _ownerRepo.GetOwnerById(GetCurrentUserId()).NeighborhoodId;
+                List<Walker> walkersInNeighborhood = _walkerRepo.GetWalkersInNeighborhood(neighborhoodId);
 
-            //    return View(walkersInNeighborhood);
-            //}
-            //else
-            //{
-            List<Walker> walkers = _walkerRepo.GetAllWalkers();
+                return View(walkersInNeighborhood);
+            }
+            else
+            {
+                List<Walker> walkers = _walkerRepo.GetAllWalkers();
 
-            return View(walkers);
-            //}
+                return View(walkers);
+            }
 
         }
 
@@ -76,7 +76,7 @@ namespace DogGo.Controllers
                 Walker = walker,
                 Walks = walks,
                 Owners = ownersWithDogs,
-                WalkTime = time.ToString(@"hh\:mm")
+                WalkTime = $"{time.Hours}hr {time.Minutes}min"
             };
 
             return View(vm);

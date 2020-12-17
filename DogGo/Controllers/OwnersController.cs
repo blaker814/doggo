@@ -33,22 +33,16 @@ namespace DogGo.Controllers
         // GET: OwnersController
         public ActionResult Index()
         {
-            return RedirectToAction("Details");
+            int currentUserId = GetCurrentUserId();
+
+            return RedirectToAction("Details", new { id = currentUserId });
         }
 
         // GET: OwnersController/Details/5
         public ActionResult Details(int id)
-        {
-            Owner owner = new Owner();
-            if (id == 0)
-            {
-                owner = _ownerRepo.GetOwnerById(GetCurrentUserId());
-            }
-            else
-            {
-                owner = _ownerRepo.GetOwnerById(id);
-            }
-
+        { 
+            Owner owner = _ownerRepo.GetOwnerById(id);
+            
             if (owner == null)
             {
                 return NotFound();

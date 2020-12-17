@@ -1,15 +1,15 @@
 ﻿@model DogGo.Models.ViewModels.WalkerProfileViewModel
 
 @{ ViewData["Title"] = "Walker Profile"; }
-<div class="bg-light">
-    <h1 class="mb-4">Walker Profile</h1>
+<div>
+    <h1 class="mb-4">@Model.Walker.Name</h1>
 
     <section class="container">
         <img style="width:100px;float:left;margin-right:20px"
-             src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Font_Awesome_5_regular_user-circle.svg" />
+             src="@Model.Walker.ImageUrl" />
         <div>
-            <label>Name:</label>
-            <span>@Model.Walker.Neighborhood.Name</span>
+            <label>Email:</label>
+            <span>@Model.Walker.Email</span>
         </div>
         <div>
             <label>Neighborhood:</label>
@@ -21,7 +21,7 @@
     <div class="clearfix"></div>
 
     <div class="row">
-        <section class="col-8 container bg-white pt-5">
+        <section class="col-8 container pt-5">
             <h2 class="text-left">Recent Walks</h2>
 
             <table class="table">
@@ -57,8 +57,8 @@
             </table>
         </section>
 
-        <section class="col-4 pt-5 container" style="background-color: #F0F8FF;">
-            <h4 style="color: gray;">Total Walk Time: @(Model.WalkTime.Split(":")[0].StartsWith('0') ? Model.WalkTime.Split(":")[0].Substring(1) : Model.WalkTime.Split(":")[0]) hr @Model.WalkTime.Split(":")[1] min</h4>
+        <section class="col-4 pt-5 container bg-light">
+            <h3 style="color: gray;">Total Walk Time: @(Model.WalkTime)</h3>
         </section>
     </div>
 </div>

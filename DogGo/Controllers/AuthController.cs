@@ -48,31 +48,43 @@ namespace DogGo.Controllers
                     new Claim(ClaimTypes.Email, owner.Email),
                     new Claim(ClaimTypes.Role, "DogOwner"),
                 };
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction("Details", "Owners", new { id = owner.Id });
             }
             else if (viewModel.Role == "Walker")
             {
-                //Walker walker = _walkerRepo.GetWalkerByEmail(viewModel.Email);
+                Walker walker = _walkerRepo.GetWalkerByEmail(viewModel.Email);
 
-                //if (walker == null)
-                //{
-                //    return Unauthorized();
-                //}
+                if (walker == null)
+                {
+                    return Unauthorized();
+                }
 
-                //claims = new List<Claim>
-                //{
-                //    new Claim(ClaimTypes.NameIdentifier, owner.Id.ToString()),
-                //    new Claim(ClaimTypes.Email, owner.Email),
-                //    new Claim(ClaimTypes.Role, "DogOwner"),
-                //};
-            }
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(
+                claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, walker.Id.ToString()),
+                    new Claim(ClaimTypes.Email, walker.Email),
+                    new Claim(ClaimTypes.Role, "DogWalker"),
+                };
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Details", "Walkers", new { id = walker.Id });
+            }
+
+            return NotFound();
         }
 
         public async Task<ActionResult> Logout()

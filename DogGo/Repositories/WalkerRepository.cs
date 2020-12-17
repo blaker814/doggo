@@ -149,6 +149,51 @@ namespace DogGo.Repositories
             }
         }
 
+        public Walker GetWalkerByEmail(string email)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT w.Id, w.[Name], Email, ImageUrl, NeighborhoodId, n.[Name] AS NeighborhoodName
+                        FROM Walker w
+                        JOIN Neighborhood n ON n.Id = NeighborhoodId
+                        WHERE w.Email = @email
+                    ";
+                    cmd.Parameters.AddWithValue("@email", email);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        Walker walker = new Walker
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
+                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                            Neighborhood = new Neighborhood
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                                Name = reader.GetString(reader.GetOrdinal("NeighborhoodName"))
+                            }
+                        };
+
+                        reader.Close();
+                        return walker;
+                    }
+                    else
+                    {
+                        reader.Close();
+                        return null;
+                    }
+                }
+            }
+        }
+
         public void AddWalker(Walker walker)
         {
             using (SqlConnection conn = Connection)
@@ -186,7 +231,7 @@ namespace DogGo.Repositories
                             SET 
                                 [Name] = @name,
                                 Email = @email,
-                                ImageUrl = @imageUrl,
+                                ImageUrl = @imageUrl,h
                                 NeighborhoodId = @neighborhoodId
                             WHERE Id = @id";
 
