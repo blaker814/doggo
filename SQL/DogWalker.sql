@@ -1,6 +1,5 @@
 USE MASTER
 GO
-
 IF NOT EXISTS (
     SELECT [name]
     FROM sys.databases
@@ -8,23 +7,19 @@ IF NOT EXISTS (
 )
 CREATE DATABASE DogWalkerMVC
 GO
-
 USE DogWalkerMVC
 GO
-
-
 DROP TABLE IF EXISTS Walks;
+DROP TABLE IF EXISTS WalkStatus;
 DROP TABLE IF EXISTS Walker;
 DROP TABLE IF EXISTS Dog;
 DROP TABLE IF EXISTS [Owner];
 DROP TABLE IF EXISTS Neighborhood;
-
-
+GO
 CREATE TABLE Neighborhood (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	[Name] VARCHAR(55) NOT NULL
 );
-
 CREATE TABLE [Owner] (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	Email VARCHAR(255) NOT NULL,
@@ -33,9 +28,8 @@ CREATE TABLE [Owner] (
 	NeighborhoodId INTEGER,
 	Phone VARCHAR(55) NOT NULL,
 	CONSTRAINT FK_Owner_Neighborhood FOREIGN KEY (NeighborhoodId) REFERENCES Neighborhood(Id),
-	CONSTRAINT UQ_Owner_Email UNIQUE(Email)
+	CONSTRAINT UQ_OWNER_Email UNIQUE(Email)
 );
-
 CREATE TABLE Dog (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	[Name] VARCHAR(55) NOT NULL,
@@ -45,7 +39,6 @@ CREATE TABLE Dog (
 	ImageUrl VARCHAR(255),
 	CONSTRAINT FK_Dog_Owner FOREIGN KEY (OwnerId) REFERENCES [Owner](Id) ON DELETE CASCADE
 );
-
 CREATE TABLE Walker (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	[Name] VARCHAR(55) NOT NULL,
@@ -53,19 +46,23 @@ CREATE TABLE Walker (
 	ImageUrl VARCHAR(255),
 	NeighborhoodId INTEGER,
 	CONSTRAINT FK_Walker_Neighborhood FOREIGN KEY (NeighborhoodId) REFERENCES Neighborhood(Id),
-	CONSTRAINT UQ_Walker_Email UNIQUE(Email)
+	CONSTRAINT UQ_WALKER_Email UNIQUE(Email)
 );
-
+CREATE TABLE WalkStatus (
+	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
+	[Description] VARCHAR(55) NOT NULL,
+);
 CREATE TABLE Walks (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 	[Date] DATETIME NOT NULL,
 	Duration INTEGER NOT NULL,
 	WalkerId INTEGER NOT NULL,
 	DogId INTEGER NOT NULL,
+    WalkStatusId INTEGER NOT NULL,
 	CONSTRAINT FK_Walks_Walker FOREIGN KEY (WalkerId) REFERENCES Walker(Id) ON DELETE CASCADE,
-	CONSTRAINT FK_Walks_Dog FOREIGN KEY (DogId) REFERENCES Dog(Id) ON DELETE CASCADE
+	CONSTRAINT FK_Walks_Dog FOREIGN KEY (DogId) REFERENCES Dog(Id) ON DELETE CASCADE,
+	CONSTRAINT FK_Walks_WalkStatus FOREIGN KEY (WalkStatusId) REFERENCES WalkStatus(Id),
 );
-
 INSERT INTO Neighborhood ([Name]) VALUES ('East Nashville');
 INSERT INTO Neighborhood ([Name]) VALUES ('Antioch');
 INSERT INTO Neighborhood ([Name]) VALUES ('Berry Hill');
@@ -81,7 +78,6 @@ INSERT INTO Neighborhood ([Name]) VALUES ('West Nashville');
 INSERT INTO Neighborhood ([Name]) VALUES ('Donelson');
 INSERT INTO Neighborhood ([Name]) VALUES ('North Nashville');
 INSERT INTO Neighborhood ([Name]) VALUES ('Belmont-Hillsboro');
-
 INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('John Sanchez', 'john@gmail.com', '355 Main St', 1, '(615)-553-2456');
 INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('Patricia Young', 'patty@gmail.com', '233 Washington St', 2, '(615)-448-5521');
 INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('Robert Brown', 'robert@gmail.com', '145 Sixth Ave', 3, '(615)-323-7711');
@@ -89,7 +85,6 @@ INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('J
 INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('Michael Moore', 'mike@gmail.com', '88 Oak St', 2, '(615)-556-7273');
 INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('Linda Green', 'linda@gmail.com', '53 Lake Cir', 3, '(615)-339-4488');
 INSERT INTO [Owner] ([Name], Email, [Address], NeighborhoodId, Phone) VALUES ('William Anderson', 'willy@gmail.com', '223 Hill St', 1, '(615)-232-6768');
-
 INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Ninni', 1, 'Rottweiler');
 INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Kuma', 1, 'Rottweiler');
 INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Remy', 2, 'Greyhound');
@@ -100,8 +95,6 @@ INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Finley', 5, 'Golden Retriever'
 INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Casper', 6, 'Golden Retriever');
 INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Bubba', 7, 'English Bulldog');
 INSERT INTO Dog ([Name], OwnerId, Breed) VALUES ('Zeus', 7, 'Schnauzer');
-
-
 INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Claudelle', 'Claudelle@gmail.com', 'https://avatars.dicebear.com/v2/female/c117aa483c649ecbc46c6d65172bf6e6.svg', 15);
 INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Roi', 'Roi@gmail.com', 'https://avatars.dicebear.com/v2/male/ebf2f3a7c07a83e6bce11358860bec57.svg', 9);
 INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Shena', 'Shena@gmail.com', 'https://avatars.dicebear.com/v2/female/08c75cdd62072da8400654c560a5ed6b.svg', 10);
@@ -152,12 +145,14 @@ INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Shaughn', 
 INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Hilliary', 'Hilliary@gmail.com', 'https://avatars.dicebear.com/v2/female/8eb9c006f613724ee3ca7a55901c8a49.svg', 15);
 INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Beilul', 'Beilul@gmail.com', 'https://avatars.dicebear.com/v2/male/3483b1f7f691e7ded77bb828df752554.svg', 6);
 INSERT INTO Walker ([Name], Email, ImageUrl, NeighborhoodId) values ('Marcille', 'Marcille@gmail.com', 'https://avatars.dicebear.com/v2/male/e62a9cecd6a394ddc316865298fcdae2.svg', 12);
-
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-09 17:30:00', 1200, 1, 1);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-10 17:30:00', 1200, 1, 2);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-08 16:00:00', 900, 2, 9);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-09 08:30:00', 1800, 2, 6);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-10 12:00:00', 1750, 3, 3);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-08 09:00:00', 1275, 3, 7);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-09 13:30:00', 2000, 4, 4);
-INSERT INTO Walks ([Date], Duration, WalkerId, DogId) VALUES ('2020-04-09 13:30:00', 2000, 4, 5);
+INSERT INTO WalkStatus ([Description]) VALUES ('Pending');
+INSERT INTO WalkStatus ([Description]) VALUES ('Approved');
+INSERT INTO WalkStatus ([Description]) VALUES ('Completed');
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-09 17:30:00', 1200, 1, 1, 1);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-10 17:30:00', 1200, 1, 2, 1);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-08 16:00:00', 900, 2, 9, 2);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-09 08:30:00', 1800, 2, 6, 3);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-10 12:00:00', 1750, 3, 3, 3);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-08 09:00:00', 1275, 3, 7, 3);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-09 13:30:00', 2000, 4, 4, 3);
+INSERT INTO Walks ([Date], Duration, WalkerId, DogId, WalkStatusId) VALUES ('2020-04-09 13:30:00', 2000, 4, 5, 3);

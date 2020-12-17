@@ -5,8 +5,16 @@
     <h1 class="mb-4">@Model.Owner.Name</h1>
 
     <section class="container">
-        <img style="width:100px;float:left;margin-right:20px"
-             src="@Model.Owner.ImageURL" />
+        @if (String.IsNullOrEmpty(Model.Owner.ImageURL))
+        {
+            <img style="width:100px;float:left;margin-right:20px"
+                 src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Font_Awesome_5_regular_user-circle.svg" />
+        }
+        else
+        {
+            <img style="width:100px;float:left;margin-right:20px"
+                 src="@Model.Owner.ImageURL" />
+        }
         <div>
             <label class="font-weight-bold">Address:</label>
             <span>@Model.Owner.Address</span>
@@ -26,7 +34,10 @@
 
     <div class="row">
         <section class="col-8 container mt-5">
-            <h1 class="text-left">Dogs</h1>
+            <div class="row">
+                <h2 class="text-left">Dogs</h2>
+                <a class="btn btn-secondary btn-sm ml-5 align-self-center" asp-action="Create" asp-controller="Dogs" role="button">Add Dog</a>
+            </div>
 
             <div class="row">
                 @foreach (Dog dog in Model.Dogs)
@@ -55,6 +66,10 @@
                                 <label class="font-weight-bold">Notes:</label>
                                 <p>@dog.Notes</p>
                             </div>
+                            <div>
+                                <a class="btn btn-secondary btn-sm align-self-center" asp-action="Details" role="button">Walks</a>
+                                <a class="btn btn-secondary btn-sm align-self-center" href="@Url.Action("Edit", "Dogs", new { id = dog.Id })" role="button">Edit</a>
+                            </div>
                         </div>
                     </div>
                 }
@@ -62,14 +77,15 @@
         </section>
 
         <section class="col-lg-4 col-md-8 container mt-5">
-            <h1>Walkers Near Me</h1>
+            <h2>Walkers Near Me</h2>
 
             <ul class="list-group mt-4">
                 @foreach (Walker walker in Model.Walkers)
                 {
-                    <li class="list-group-item disabled" aria-disabled="true">
+                    <li class="list-group-item d-flex align-items-center" aria-disabled="true">
                         <img src="@walker.ImageUrl" style="width:50px" />
                         <span class="font-weight-bold ml-4">@walker.Name</span>
+                        <a class="btn btn-secondary btn-sm ml-auto rounded-pill" asp-action="Details" role="button">Schedule a Walk</a>
                     </li>
                 }
             </ul>
