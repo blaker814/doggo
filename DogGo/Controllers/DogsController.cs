@@ -61,7 +61,7 @@ namespace DogGo.Controllers
 
                 _dogRepo.AddDog(dog);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Owners");
             }
             catch
             {
@@ -94,7 +94,7 @@ namespace DogGo.Controllers
 
                 _dogRepo.UpdateDog(dog);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Owners");
             }
             catch
             {
@@ -125,7 +125,7 @@ namespace DogGo.Controllers
             {
                 _dogRepo.DeleteDog(id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Owners");
             }
             catch
             {

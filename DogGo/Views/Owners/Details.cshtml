@@ -43,6 +43,9 @@
                 @foreach (Dog dog in Model.Dogs)
                 {
                     <div class="card m-4" style="width: 18rem;">
+                        <a class="btn btn-sm close ml-auto" href="@Url.Action("Delete", "Dogs", new { id = dog.Id })" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </a>
                         @if (String.IsNullOrEmpty(dog.ImageUrl))
                         {
                             <img src="https://cdn.pixabay.com/photo/2018/08/15/13/12/dog-3608037_960_720.jpg"
@@ -53,7 +56,7 @@
                         {
                             <img src="@dog.ImageUrl" class="card-img-top" alt="Doggo" />
                         }
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <div>
                                 <label class="font-weight-bold">Name:</label>
                                 <span>@dog.Name</span>
@@ -66,9 +69,9 @@
                                 <label class="font-weight-bold">Notes:</label>
                                 <p>@dog.Notes</p>
                             </div>
-                            <div>
-                                <a class="btn btn-secondary btn-sm align-self-center" asp-action="Details" role="button">Walks</a>
-                                <a class="btn btn-secondary btn-sm align-self-center" href="@Url.Action("Edit", "Dogs", new { id = dog.Id })" role="button">Edit</a>
+                            <div class="align-self-end mt-n5 d-flex flex-column">
+                                <a class="btn btn-secondary btn-sm align-self-center w-100 mb-1" href="@Url.Action("Details", "Dogs", new { id = dog.Id })" role="button">Walks</a>
+                                <a class="btn btn-secondary btn-sm align-self-center w-100" href="@Url.Action("Edit", "Dogs", new { id = dog.Id })" role="button">Edit</a>
                             </div>
                         </div>
                     </div>
@@ -89,6 +92,48 @@
                     </li>
                 }
             </ul>
+        </section>
+   
+        <section class="col-8 container pt-5">
+            <h2 class="text-left">Upcoming Walks</h2>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Walker
+                        </th>
+                        <th>
+                            Dog
+                        </th>
+                        <th>
+                            Date/Time
+                        </th>
+                        <th>
+                            Confirmed
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.UpcomingWalks)
+                    {
+                    <tr>
+                        <td>
+                            @Model.Walkers.FirstOrDefault(walker => walker.Id == item.WalkerId).Name
+                        </td>
+                        <td>
+                            @Model.Dogs.First(dog => dog.Id == item.DogId).Name
+                        </td>
+                        <td>
+                            @item.Date
+                        </td>
+                        <td>
+                            @item.WalkStatus.Description
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
         </section>
     </div>
 </div>
