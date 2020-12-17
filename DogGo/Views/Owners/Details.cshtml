@@ -97,7 +97,7 @@
         <section class="col-8 container pt-5">
             <h2 class="text-left">Upcoming Walks</h2>
 
-            <table class="table">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>
@@ -128,7 +128,14 @@
                             @item.Date
                         </td>
                         <td>
-                            @item.WalkStatus.Description
+                            @if (item.WalkStatus.Id == 2)
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                @item.WalkStatus.Description
+                            }
                         </td>
                     </tr>
                     }
