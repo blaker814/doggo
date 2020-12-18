@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DogGo.Controllers
 {
-    public class WalksController : Controller
+    public class WalksController : DoggoControllerBase
     {
         private readonly IWalkerRepository _walkerRepo;
         private readonly IWalkRepository _walkRepo;
@@ -46,10 +46,12 @@ namespace DogGo.Controllers
             {
                 Walk = new Walk()
                 {
+                    Date = DateTime.Now,
                     WalkerId = walker.Id,
                     WalkStatusId = 1
                 },
-                Walker = walker
+                Walker = walker,
+                Dogs = _dogRepo.GetDogsByOwnerId(GetCurrentUserId())
             };
 
             return View(viewModel);
@@ -58,15 +60,20 @@ namespace DogGo.Controllers
         // POST: Walks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(RequestWalkViewModel viewModel)
         {
             try
             {
+                _walkRepo.AddWalk(viewModel.Walk);
+
                 return RedirectToAction(nameof(Index), "Owners");
             }
             catch
             {
-                return View();
+                RequestWalkViewModel sameView = viewModel;
+                viewModel.Dogs = _dogRepo.GetDogsByOwnerId(GetCurrentUserId());
+
+                return View(sameView);
             }
         }
 

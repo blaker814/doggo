@@ -4,15 +4,18 @@
     ViewData["Title"] = "Create";
 }
 
-<h4>Schedule an Appointment With @Model.Walker.Name</h4>
+<h2>Schedule an Appointment With @Model.Walker.Name</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <input type="hidden" asp-for="Walker.Name" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label asp-for="Walk.Date" class="control-label"></label>
-                <input asp-for="Walk.Date" class="form-control" min="@DateTime.Now" value=@DateTime.Now.ToString("yyyy-MM-ddThh:mm") />
+                <input asp-for="Walk.Date" class="form-control" min=@DateTime.Now.ToString("yyyy-MM-ddTHH:mm") value=@Model.Walk.Date.ToString("yyyy-MM-ddTHH:mm") />
                 <span asp-validation-for="Walk.Date" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -23,14 +26,20 @@
             </div>
             <div class="form-group">
                 <label asp-for="Walk.DogId" class="control-label"></label>
-                <input asp-for="Walk.DogId" class="form-control" />
+                <select asp-for="Walk.DogId" class="form-control">
+                    <option>Select Which Dog to Walk</option>
+                    @foreach (Dog dog in Model.Dogs)
+                    {
+                        <option value="@dog.Id">@dog.Name</option>
+                    }
+                </select>
                 <span asp-validation-for="Walk.DogId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="hidden" asp-for="Walk.WalkStatusId" class="form-control" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Submit" class="btn btn-primary" />
             </div>
         </form>
     </div>

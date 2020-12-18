@@ -125,7 +125,7 @@
                             @Model.Dogs.First(dog => dog.Id == item.DogId).Name
                         </td>
                         <td>
-                            @item.Date
+                            @Html.DisplayFor(m => item.Date)
                         </td>
                         <td>
                             @if (item.WalkStatus.Id == 2)

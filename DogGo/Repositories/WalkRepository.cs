@@ -66,8 +66,9 @@ namespace DogGo.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT w.Id, Date, Duration, WalkerId, DogId, WalkStatusId, Description
+                    cmd.CommandText = @"SELECT w.Id, Date, Duration, WalkerId, DogId, WalkStatusId, Description, Name
                                         FROM Walks w
+                                        JOIN Walker ON Walker.Id = WalkerId
                                         JOIN WalkStatus ws ON ws.Id = WalkStatusId
                                         WHERE DogId = @id";
                     cmd.Parameters.AddWithValue("@id", dogId);
@@ -82,6 +83,11 @@ namespace DogGo.Repositories
                             Date = reader.GetDateTime(reader.GetOrdinal("Date")),
                             Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
                             WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
+                            Walker = new Walker
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("WalkerId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            },
                             DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
                             WalkStatusId = reader.GetInt32(reader.GetOrdinal("WalkStatusId")),
                             WalkStatus = new WalkStatus
@@ -138,7 +144,7 @@ namespace DogGo.Repositories
             }
         }
 
-        public void Add(Walk walk)
+        public void AddWalk(Walk walk)
         {
             using (SqlConnection conn = Connection)
             {
@@ -146,7 +152,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO Walk (Date, Duration, WalkerId, DogId, WalkStatusId)
+                    INSERT INTO Walks (Date, Duration, WalkerId, DogId, WalkStatusId)
                     OUTPUT INSERTED.ID
                     VALUES (@date, @duration, @walkerId, @dogId, @walkStatusId);
                 ";
@@ -164,7 +170,7 @@ namespace DogGo.Repositories
             }
         }
 
-        public void Update(Walk walk)
+        public void UpdateWalk(Walk walk)
         {
             using (SqlConnection conn = Connection)
             {
@@ -173,7 +179,7 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            UPDATE Walk
+                            UPDATE Walks
                             SET 
                                 Date = @date,
                                 Duration = @duration,

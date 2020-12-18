@@ -1,4 +1,5 @@
 ﻿using DogGo.Models;
+using DogGo.Models.ViewModels;
 using DogGo.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,11 +15,13 @@ namespace DogGo.Controllers
     public class DogsController : DoggoControllerBase
     {
         private readonly IDogRepository _dogRepo;
+        private readonly IWalkRepository _walkRepo;
 
         // ASP.NET will give us an instance of our Dog Repository. This is called "Dependency Injection"
-        public DogsController(IDogRepository dogRepository)
+        public DogsController(IDogRepository dogRepository, IWalkRepository walkRepository)
         {
             _dogRepo = dogRepository;
+            _walkRepo = walkRepository;
         }
 
         // GET: DogsController
@@ -40,7 +43,14 @@ namespace DogGo.Controllers
                 return NotFound();
             }
 
-            return View(dog);
+            List<Walk> walks = _walkRepo.GetWalksByDogId(id);
+            DogProfileViewModel viewModel = new DogProfileViewModel
+            {
+                Dog = dog,
+                Walks = walks.Where(walk => walk.WalkStatusId == 3).ToList()
+            };
+
+            return View(viewModel);
         }
 
         // GET: DogsController/Create
