@@ -88,7 +88,7 @@
                     <li class="list-group-item d-flex align-items-center" aria-disabled="true">
                         <img src="@walker.ImageUrl" style="width:50px" />
                         <span class="font-weight-bold ml-4">@walker.Name</span>
-                        <a class="btn btn-secondary btn-sm ml-auto rounded-pill" asp-action="Create" asp-controller="Walks" role="button">Schedule a Walk</a>
+                        <a class="btn btn-secondary btn-sm ml-auto rounded-pill" href="@Url.Action("Create", "Walks", new { walkerId = walker.Id })" role="button">Schedule a Walk</a>
                     </li>
                 }
             </ul>

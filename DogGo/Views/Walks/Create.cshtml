@@ -1,0 +1,45 @@
+﻿@model DogGo.Models.ViewModels.RequestWalkViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Schedule an Appointment With @Model.Walker.Name</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Walk.Date" class="control-label"></label>
+                <input asp-for="Walk.Date" class="form-control" min="@DateTime.Now" value=@DateTime.Now.ToString("yyyy-MM-ddThh:mm") />
+                <span asp-validation-for="Walk.Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="Walk.Duration" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="Walk.WalkerId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Walk.DogId" class="control-label"></label>
+                <input asp-for="Walk.DogId" class="form-control" />
+                <span asp-validation-for="Walk.DogId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="Walk.WalkStatusId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Owners">Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

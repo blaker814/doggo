@@ -58,14 +58,12 @@ namespace DogGo.Controllers
 
             List<Walk> walks = _walkRepo.GetWalksByWalkerId(walker.Id);
             List<Owner> owners = _ownerRepo.GetAllOwners();
-            List<Owner> ownersWithDogs = new List<Owner>();
+            List<Dog> ownerDogs = new List<Dog>();
+
             foreach (Owner owner in owners)
             {
-                ownersWithDogs.Add(new Owner
-                {
-                    Name = owner.Name,
-                    Dogs = _dogRepo.GetDogsByOwnerId(owner.Id)
-                });
+                List<Dog> dogs = _dogRepo.GetDogsByOwnerId(owner.Id);
+                ownerDogs.ForEach(dog => ownerDogs.Add(dog));
             };
 
             int secs = walks.Sum(walk => walk.Duration);
@@ -75,7 +73,8 @@ namespace DogGo.Controllers
             {
                 Walker = walker,
                 Walks = walks,
-                Owners = ownersWithDogs,
+                Owners = owners,
+                OwnerDogs = ownerDogs,
                 WalkTime = $"{time.Hours}hr {time.Minutes}min"
             };
 
