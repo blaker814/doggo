@@ -59,8 +59,8 @@ namespace DogGo
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Auth}/{action=Login}/{id?}");
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

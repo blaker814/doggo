@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DogGo.Controllers
 {
-    public class WalkersController : Controller
+    public class WalkersController : DoggoControllerBase
     {
         private readonly IWalkerRepository _walkerRepo;
         private readonly IWalkRepository _walkRepo;
@@ -123,16 +123,16 @@ namespace DogGo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Walker walker)
         {
-            //try
-            //{
+            try
+            {
                 _walkerRepo.UpdateWalker(walker);
 
                 return RedirectToAction(nameof(Index));
-            //}
-            //catch
-            //{
-            //    return View();
-            //}
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // GET: WalkersController/Delete/5
@@ -158,12 +158,6 @@ namespace DogGo.Controllers
             {
                 return View(walker);
             }
-        }
-
-        private int GetCurrentUserId()
-        {
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return id != null ? int.Parse(id) : -1;
         }
     }
 }

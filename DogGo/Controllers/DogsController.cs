@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DogGo.Controllers
 {
-    public class DogsController : Controller
+    public class DogsController : DoggoControllerBase
     {
         private readonly IDogRepository _dogRepo;
 
@@ -131,12 +131,6 @@ namespace DogGo.Controllers
             {
                 return View(dog);
             }
-        }
-
-        private int GetCurrentUserId()
-        {
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.Parse(id);
         }
     }
 }

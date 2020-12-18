@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DogGo.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : DoggoControllerBase
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -20,7 +21,15 @@ namespace DogGo.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            string role = GetCurrentUserRole();
+            int id = GetCurrentUserId();
+
+            return role == "DogOwner" ? RedirectToAction("Details", "Owners", new { id = id }) : RedirectToAction("Details", "Walkers", new { id = id });
         }
 
         public IActionResult Privacy()

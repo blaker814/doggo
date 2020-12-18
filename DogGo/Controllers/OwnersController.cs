@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace DogGo.Controllers
 {
-    public class OwnersController : Controller
+    public class OwnersController : DoggoControllerBase
     {
         private IOwnerRepository _ownerRepo;
         private IDogRepository _dogRepo;
@@ -176,11 +176,6 @@ namespace DogGo.Controllers
                 return View(owner);
             }
 
-        }
-        private int GetCurrentUserId()
-        {
-            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.Parse(id);
         }
     }
 }
