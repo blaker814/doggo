@@ -1,0 +1,56 @@
+﻿@model DogGo.Models.Walk
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Complete Appointment</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="hidden" asp-for="Id" class="form-control" />
+            </div>
+            <div class="form-group">
+                <p>Walker: @Model.Walker.Name</p>
+            </div>
+            <div class="form-group">
+                <p>Date: @Html.DisplayFor(m => Model.Date)</p>
+                <input type="hidden" asp-for="Date" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Duration" class="control-label"></label>
+                <select asp-for="Duration" class="form-control">
+                    <option>Select duration</option>
+                    @for (int i = 1; i < 25; i++)
+                    {
+                        <option value=@(i*300)>@(i*5) min</option>
+                    }
+                </select>
+                <span asp-validation-for="Duration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="WalkerId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="DogId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="WalkStatusId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Walkers">Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

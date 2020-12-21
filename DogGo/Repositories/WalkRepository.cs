@@ -1,4 +1,5 @@
 ﻿using DogGo.Models;
+using DogGo.Repositories.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -20,6 +21,49 @@ namespace DogGo.Repositories
 
         public SqlConnection Connection => new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 
+        public Walk GetWalkById(int walkId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT w.Id, Date, Duration, DogId, WalkerId, WalkStatusId, Name
+                                        FROM Walks w
+                                        JOIN Walker ON Walker.Id = WalkerId
+                                        WHERE w.Id = @id";
+                    cmd.Parameters.AddWithValue("@id", walkId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if(reader.Read())
+                    {
+                        Walk walk = new Walk
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Date = reader.GetDateTime(reader.GetOrdinal("Date")),
+                            Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
+                            DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
+                            WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
+                            Walker = new Walker
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            },
+                            WalkStatusId = reader.GetInt32(reader.GetOrdinal("WalkStatusId"))
+                        };
+
+                        reader.Close();
+                        return walk;
+                    }
+                    else
+                    {
+                        reader.Close();
+                        return null;
+                    }
+                }
+            }
+        }
+
         public List<Walk> GetWalksByWalkerId(int walkerId)
         {
             using (SqlConnection conn = Connection)
@@ -27,9 +71,10 @@ namespace DogGo.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT w.Id, Date, Duration, WalkerId, DogId, WalkStatusId, Description
+                    cmd.CommandText = @"SELECT w.Id, Date, Duration, WalkerId, DogId, WalkStatusId, Description, Name, OwnerId, ImageUrl
                                         FROM Walks w
                                         JOIN WalkStatus ws ON ws.Id = WalkStatusId
+                                        JOIN Dog ON Dog.Id = DogId
                                         WHERE WalkerId = @id";
                     cmd.Parameters.AddWithValue("@id", walkerId);
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -44,6 +89,13 @@ namespace DogGo.Repositories
                             Duration = reader.GetInt32(reader.GetOrdinal("Duration")),
                             WalkerId = reader.GetInt32(reader.GetOrdinal("WalkerId")),
                             DogId = reader.GetInt32(reader.GetOrdinal("DogId")),
+                            Dog = new Dog
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("DogId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                ImageUrl = ReaderUtils.GetNullableString(reader, "ImageUrl"),
+                                OwnerId = reader.GetInt32(reader.GetOrdinal("OwnerId"))
+                            },
                             WalkStatusId = reader.GetInt32(reader.GetOrdinal("WalkStatusId")),
                             WalkStatus = new WalkStatus
                             {
@@ -66,7 +118,7 @@ namespace DogGo.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT w.Id, Date, Duration, WalkerId, DogId, WalkStatusId, Description, Name
+                    cmd.CommandText = @"SELECT w.Id, Date, Duration, WalkerId, DogId, WalkStatusId, Description, Walker.Name
                                         FROM Walks w
                                         JOIN Walker ON Walker.Id = WalkerId
                                         JOIN WalkStatus ws ON ws.Id = WalkStatusId

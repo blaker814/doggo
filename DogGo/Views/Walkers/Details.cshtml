@@ -21,44 +21,107 @@
     <div class="clearfix"></div>
 
     <div class="row">
+        <section class="border-right pr-4">
+            <h3 class="text-left">Confirm Appointments</h3>
+
+            @foreach (Walk walk in Model.Walks)
+            {
+                if (walk.WalkStatusId == 1)
+                {
+                    <div class="card m-4 d-flex flex-row flex-wrap" style="width: 18rem;">
+                        @if (String.IsNullOrEmpty(walk.Dog.ImageUrl))
+                        {
+                            <img src="https://cdn.pixabay.com/photo/2018/08/15/13/12/dog-3608037_960_720.jpg"
+                                    class="card-img-top"
+                                    style="width: 7rem;"
+                                    alt="Doggo" />
+                        }
+                        else
+                        {
+                            <img src="@walk.Dog.ImageUrl" class="card-img-top" alt="Doggo" />
+                        }
+                    <div>
+                        <div>
+                            <h5>@Model.Owners.First(owner => owner.Id == walk.Dog.OwnerId).Name</h5>
+                        </div>
+                        <div>
+                            <label>Dog:</label>
+                            <span>@walk.Dog.Name</span>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div>
+                            <label class="font-weight-bold">Date:</label>
+                            @Html.DisplayFor(m => walk.Date)
+                        </div>
+                        <div class="align-self-end">
+                            <a class="btn btn-secondary btn-sm align-self-center w-100 ml-auto" href="@Url.Action("Confirm", "Walks", new { id = walk.Id })" role="button">Confirm</a>
+                        </div>
+                    </div>
+                    </div>
+                }
+            }
+        </section>
+        
         <section class="col-8 container pt-5">
-            <h2 class="text-left">Recent Walks</h2>
+            <h3 class="text-left">Appointments</h3>
 
             <table class="table">
                 <thead>
                     <tr>
                         <th>
-                            Date
+                            Owner
                         </th>
                         <th>
-                            Owner
+                            Dog
                         </th>
                         <th>
                             Duration
                         </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Completed
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Walks)
+                    @foreach (var walk in Model.Walks)
                     {
-                        <tr>
-                            <td>
-                                @item.Date.ToShortDateString()
-                            </td>
-                            <td>
-                                @Model.Owners.First(owner => Model.OwnerDogs.Any(dog => dog.Id == item.DogId)).Name
-                            </td>
-                            <td>
-                                @(item.Duration / 60 ) min
-                            </td>
-                        </tr>
+                        @if (walk.WalkStatusId != 1)
+                        {
+                            <tr>
+                                <td>
+                                    @Model.Owners.First(owner => owner.Id == walk.Dog.OwnerId).Name
+                                </td>
+                                <td>
+                                    @walk.Dog.Name
+                                </td>
+                                @if (walk.WalkStatusId == 2)
+                                {
+                                    <td>TBD</td>
+                                }
+                                else
+                                {
+                                    <td>@(walk.Duration / 60) min</td>
+                                }
+                                <td>
+                                    @walk.Date.ToShortDateString()
+                                </td>
+                                @if (walk.WalkStatusId == 3)
+                                {
+                                    <td>Yes</td>
+                                }
+                                else
+                                {
+                                    <td><a class="btn btn-secondary" href="@Url.Action("Edit", "Walks", new { id = walk.Id })">Complete</a></td>
+                                }
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
-        </section>
-
-        <section class="col-4 pt-5 container bg-light">
-            <h3 style="color: gray;">Total Walk Time: @(Model.WalkTime)</h3>
         </section>
     </div>
 </div>

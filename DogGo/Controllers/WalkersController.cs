@@ -30,19 +30,9 @@ namespace DogGo.Controllers
         // GET: Walkers
         public ActionResult Index()
         {
-            if (GetCurrentUserId() != -1)
-            {
-                int neighborhoodId = _ownerRepo.GetOwnerById(GetCurrentUserId()).NeighborhoodId;
-                List<Walker> walkersInNeighborhood = _walkerRepo.GetWalkersInNeighborhood(neighborhoodId);
+            int currentUserId = GetCurrentUserId();
 
-                return View(walkersInNeighborhood);
-            }
-            else
-            {
-                List<Walker> walkers = _walkerRepo.GetAllWalkers();
-
-                return View(walkers);
-            }
+            return RedirectToAction("Details", new { id = currentUserId });
 
         }
 
